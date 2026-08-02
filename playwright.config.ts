@@ -27,16 +27,24 @@ export default defineConfig({
   // Cấu hình chạy trên 3 trình duyệt
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "chrome",
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
+      },
     },
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
+      use: {
+        ...devices["Desktop Firefox"],
+      },
     },
     {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
+      name: "edge",
+      use: {
+        ...devices["Desktop Edge"],
+        channel: "msedge",
+      },
     },
   ],
 });
