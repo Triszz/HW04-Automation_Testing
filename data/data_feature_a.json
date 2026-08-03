@@ -1,0 +1,122 @@
+[
+  {
+    "id": "TC01",
+    "type": "Positive",
+    "name": "Nguyen Van A",
+    "email": "valid.user.01@domain.com",
+    "password": "Password123!",
+    "confirmPassword": "Password123!",
+    "expectedResult": "Success",
+    "expectedMessage": "Đăng ký thành công"
+  },
+  {
+    "id": "TC02",
+    "type": "Negative",
+    "name": "Nguyen Van B",
+    "email": "valid.user.01@domain.com",
+    "password": "Password123!",
+    "confirmPassword": "Password123!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Email đã tồn tại"
+  },
+  {
+    "id": "TC03",
+    "type": "Negative",
+    "name": "Nguyen Van C",
+    "email": "invalidemail.com",
+    "password": "Password123!",
+    "confirmPassword": "Password123!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Email không hợp lệ"
+  },
+  {
+    "id": "TC04",
+    "type": "Negative",
+    "name": "Nguyen Van D",
+    "email": "test@domain",
+    "password": "Password123!",
+    "confirmPassword": "Password123!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Email không hợp lệ"
+  },
+  {
+    "id": "TC05",
+    "type": "Negative",
+    "name": "Nguyen Van E",
+    "email": "test5@domain.com",
+    "password": "Pass1!",
+    "confirmPassword": "Pass1!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Mật khẩu phải có ít nhất 8 ký tự"
+  },
+  {
+    "id": "TC06",
+    "type": "Negative",
+    "name": "Nguyen Van F",
+    "email": "test6@domain.com",
+    "password": "password123!",
+    "confirmPassword": "password123!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Mật khẩu phải chứa ít nhất 1 chữ hoa"
+  },
+  {
+    "id": "TC07",
+    "type": "Negative",
+    "name": "Nguyen Van G",
+    "email": "test7@domain.com",
+    "password": "PASSWORD123!",
+    "confirmPassword": "PASSWORD123!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Mật khẩu phải chứa ít nhất 1 chữ thường"
+  },
+  {
+    "id": "TC08",
+    "type": "Negative",
+    "name": "Nguyen Van H",
+    "email": "test8@domain.com",
+    "password": "Password!!!!",
+    "confirmPassword": "Password!!!!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Mật khẩu phải chứa ít nhất 1 chữ số"
+  },
+  {
+    "id": "TC09",
+    "type": "Negative",
+    "name": "Nguyen Van I",
+    "email": "test9@domain.com",
+    "password": "Password1234",
+    "confirmPassword": "Password1234",
+    "expectedResult": "Fail",
+    "expectedMessage": "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt"
+  },
+  {
+    "id": "TC10",
+    "type": "Negative",
+    "name": "Nguyen Van K",
+    "email": "test10@domain.com",
+    "password": "Password123!",
+    "confirmPassword": "Password1234!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Mật khẩu xác nhận không khớp"
+  },
+  {
+    "id": "TC11",
+    "type": "Negative",
+    "name": "",
+    "email": "test11@domain.com",
+    "password": "Password123!",
+    "confirmPassword": "Password123!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Vui lòng nhập họ tên"
+  },
+  {
+    "id": "TC12",
+    "type": "Negative",
+    "name": "Nguyen Van M",
+    "email": "",
+    "password": "Password123!",
+    "confirmPassword": "Password123!",
+    "expectedResult": "Fail",
+    "expectedMessage": "Vui lòng nhập email"
+  }
+]

@@ -9,14 +9,15 @@ export default defineConfig({
 
   // Cấu hình HTML Report để hiển thị MSSV
   reporter: [
-    ["html", { open: "never" }],
-    // Sử dụng tính năng metadata để chèn thông tin sinh viên vào báo cáo
     ["list"],
+    [
+      "html",
+      {
+        open: "never",
+        title: "EShop Automation Report - Run by: 23127503",
+      },
+    ],
   ],
-
-  metadata: {
-    "Run by": "23127503",
-  },
 
   use: {
     trace: "on-first-retry",
