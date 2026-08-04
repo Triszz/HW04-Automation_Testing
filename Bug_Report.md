@@ -10,7 +10,7 @@
 
 ---
 
-## Feature A: FR-01: Account Registration (Pool A)
+## Feature A: FR-01: Đăng ký tài khoản (Pool A)
 
 ### Bug 1: [Blocker] FR-01: Regex Validation tại Frontend sai logic, từ chối mọi mật khẩu hợp lệ
 
@@ -99,7 +99,7 @@
 
 - **Tác động:** Sai lệch toàn bộ dữ liệu thanh toán. Đơn hàng bị đội giá lên gấp nhiều lần và hiển thị số tiền giảm giá âm, gây hoang mang cho khách hàng và phá vỡ hoàn toàn quy trình Checkout.
 
-- **Trạng thái Automation:** Kịch bản Automation (TC02, TC04) đã bị lọt lưới (False Positive) và báo `Passed` do giới hạn của kịch bản do AI sinh ra (Weak Assertion - Kịch bản chỉ kiểm tra sự tồn tại của chữ "Tiết kiệm" mà chưa lấy các biến giá trị số học ra để so sánh chéo).
+- **Trạng thái Automation:** Kịch bản ban đầu do AI sinh ra bị lọt lưới (False Positive) do sử dụng Weak Assertion. Tuy nhiên, sau khi em can thiệp nâng cấp lên **Strong Assertion** (kiểm tra chéo giá trị số học), kịch bản đã tự động bắt được lỗi này. Hiện tại, Test Case (TC02) đã bị `Failed` và được chủ động đánh dấu `test.fail()` trong mã nguồn.
 
 - **Issue Link:** https://github.com/Triszz/HW04-Automation_Testing/issues/5
 

@@ -12,7 +12,7 @@
 
 ## Task 1: Review & Gap Analysis of AI-generated Scripts
 
-### Feature A: FR-01 - Account Registration (Pool A)
+### Feature A: FR-01 - Đăng ký tài khoản (Pool A)
 
 **1. What the AI got wrong or missed:**
 
@@ -43,7 +43,7 @@ Qua quá trình phân tích (Root Cause Analysis) và đối chiếu giao diện
 
 ---
 
-### Feature B: FR-09 - Apply Coupon (Pool B)
+### Feature B: FR-09 - Mã Giảm Giá (Coupon) (Pool B)
 
 **1. What the AI got wrong or missed:**
 
@@ -56,6 +56,7 @@ Qua quá trình phân tích (Root Cause Analysis) và đối chiếu giao diện
 - **Exploiting Dev Backdoor:** Thay vì viết thêm các hàm phức tạp như `login()` hay `addToCart()` để bù đắp thiếu sót của AI, em đã tiến hành Code Review mã nguồn React của frontend và phát hiện một lỗ hổng (backdoor): Lập trình viên để lộ một thẻ `input[type="number"]` cho phép sửa trực tiếp tổng tiền. Em đã map `data.total_amount` trực tiếp vào ô này, giúp tối ưu hóa kịch bản test.
 - **Strict Mode Selectors:** Sửa lại các locator chung chung của AI (như `.text-red-600` bị trùng lặp với class của ô input) thành các selector đặc tả chính xác hơn (VD: `p.text-red-600`).
 - **Handling Element States:** Bổ sung logic xử lý cho Edge Case (TC12 - Mã rỗng) bằng cách kiểm tra trạng thái nút bấm (`await expect(applyBtn).toBeDisabled();`) để ngăn chặn lỗi Timeout 30s do Playwright cố click vào phần tử bị mờ.
+- **Upgrading to Strong Assertions:** Để khắc phục tình trạng lọt lưới (False Positive) của kịch bản gốc ở TC02, em đã nâng cấp Assertion bằng cách trích xuất trực tiếp `expectedDiscount` và `expectedFinal` từ file JSON, ép kiểu dữ liệu và format số có dấu phẩy (`toLocaleString()`). Việc đối chiếu chính xác các con số này buộc kịch bản phải đánh `Failed` ngay lập tức khi Backend trả về số tiền tính toán sai (số âm).
 
 **3. Test Execution & System Defect Discovery:**
 
@@ -68,9 +69,9 @@ Kịch bản Automation được thiết kế bao gồm 12 Test Cases (Data-driv
 
 Khác với Feature A bị hỏng toàn diện, Feature B vẫn có những luồng hoạt động thành công. Do đó, đối với các lỗi phát hiện được, em áp dụng chiến lược sử dụng `test.fail()` của Playwright để đánh dấu chúng là **Known Bugs**. Kỹ thuật này giúp kịch bản phân tách rõ ràng giữa test case hỏng do lỗi Script và test case hỏng do khiếm khuyết của hệ thống.
 
-Qua quá trình chạy Automation kết hợp với Kiểm thử thăm dò thủ công (Exploratory Testing), em đã log thành công 4 Bugs nghiêm trọng:
+Qua quá trình chạy Automation kết hợp với Kiểm thử thăm dò thủ công (Exploratory Testing), tôi đã log thành công 4 Bugs nghiêm trọng:
 
-- **[Bug 1] Boundary Logic:** Hệ thống sử dụng toán tử `>` thay vì `>=` cho ngưỡng tối thiểu, từ chối mã khi đơn hàng vừa chạm mức 300,000đ.
-- **[Bug 2] Auth Bypass:** API `/apply-coupon` không yêu cầu JWT Token, cho phép Guest áp dụng mã giảm giá, gây trải nghiệm UX xấu khi bị chặn lại ở bước thanh toán cuối và có nguy cơ rò rỉ (brute-force) mã khuyến mãi.
-- **[Bug 3] Critical Calculation Error:** Nhờ phát hiện lỗ hổng Weak Assertion của AI, kiểm thử thủ công xác nhận Backend tính toán sai công thức loại Percent (nhân tổng tiền thay vì chia 100), trả về số tiền tiết kiệm âm hàng trăm triệu đồng.
-- **[Bug 4] Missing Negative Validation:** Hệ thống không có cơ chế chặn validation khi người dùng nhập số tiền tổng đơn hàng là số âm.
+- **[Major] Lỗi logic giá trị biên (Boundary Bug):** Hệ thống sử dụng toán tử `>` thay vì `>=` cho ngưỡng tối thiểu, từ chối mã khi đơn hàng vừa chạm mức 300,000đ.
+- **[Major] Lỗi bảo mật bỏ qua xác thực (Auth Bypass):** API `/apply-coupon` không yêu cầu JWT Token, cho phép Guest áp dụng mã giảm giá, gây trải nghiệm UX xấu khi bị chặn lại ở bước thanh toán cuối và có nguy cơ rò rỉ (brute-force) mã khuyến mãi.
+- **[Critical] Tính toán sai công thức toán học:** Nhờ phát hiện lỗ hổng Weak Assertion của AI, kiểm thử thủ công xác nhận Backend tính toán sai công thức loại Percent (nhân tổng tiền thay vì chia 100), trả về số tiền tiết kiệm âm hàng trăm triệu đồng. Sau khi nâng cấp kịch bản lên Strong Assertion, Automation đã bắt được lỗi này và em đã chủ động đánh dấu `test.fail()` cho TC02.
+- **[Major] Thiếu Validation chặn số âm:** Hệ thống không có cơ chế làm sạch dữ liệu đầu vào (Input Validation), không chặn lỗi khi người dùng nhập số tiền tổng đơn hàng là số âm.

@@ -24,6 +24,13 @@ test.describe("Pool B - FR-09: Apply Coupon", () => {
         test.fail(true, "Bug: Thiếu validation chặn số tiền âm");
       }
 
+      if (data.id === "TC02") {
+        test.fail(
+          true,
+          "Bug: Tính toán sai công thức mã giảm giá phần trăm (Percent)",
+        );
+      }
+
       await page.goto(CHECKOUT_URL);
 
       const totalAmountInput = page.locator('input[type="number"]');
@@ -55,14 +62,22 @@ test.describe("Pool B - FR-09: Apply Coupon", () => {
         const successMsg = page.locator(".text-green-700");
 
         // [Assertion Pattern 3]: Visibility / DOM State Assertion
-        // Xác nhận phần tử thông báo thành công thực sự xuất hiện và hiển thị trên màn hình.
         await expect(successMsg).toBeVisible();
 
         // [Assertion Pattern 4]: Substring / Text Content Assertion
-        // Xác nhận nội dung văn bản bên trong phần tử có chứa từ khóa mong đợi.
+        // Lấy con số từ JSON, ép kiểu (as number) để TypeScript không báo lỗi, và format theo chuẩn có dấu phẩy.
+        const expectedDiscount = data.expectedDiscount as number;
+        const expectedFinal = data.expectedFinal as number;
+
         await expect(successMsg).toContainText("Tiết kiệm", {
           ignoreCase: true,
         });
+
+        // Assertions: Bắt buộc UI phải render đúng con số toán học mong đợi
+        await expect(successMsg).toContainText(
+          expectedDiscount.toLocaleString(),
+        );
+        await expect(successMsg).toContainText(expectedFinal.toLocaleString());
       } else {
         const errorMsg = page.locator("p.text-red-600");
 
