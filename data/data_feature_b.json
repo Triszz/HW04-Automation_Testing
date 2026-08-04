@@ -71,7 +71,7 @@
     "total_amount": 299999,
     "user_id": 1,
     "expectedStatus": 400,
-    "expectedError": "Đơn hàng chưa đạt mức tối thiểu"
+    "expectedError": "Đơn hàng chưa đủ giá trị tối thiểu"
   },
   {
     "id": "TC08",
@@ -81,7 +81,7 @@
     "total_amount": 100000,
     "user_id": 1,
     "expectedStatus": 400,
-    "expectedError": "Đơn hàng chưa đạt mức tối thiểu"
+    "expectedError": "Đơn hàng chưa đủ giá trị tối thiểu"
   },
   {
     "id": "TC09",
