@@ -1,0 +1,126 @@
+[
+  {
+    "id": "TC01",
+    "type": "Positive",
+    "description": "Mã percent, bằng min_order (C3 Biên)",
+    "code": "SAVE10",
+    "total_amount": 300000,
+    "user_id": 1,
+    "expectedStatus": 200,
+    "expectedDiscount": 30000,
+    "expectedFinal": 270000
+  },
+  {
+    "id": "TC02",
+    "type": "Positive",
+    "description": "Mã percent, lớn hơn min_order",
+    "code": "SAVE10",
+    "total_amount": 500000,
+    "user_id": 1,
+    "expectedStatus": 200,
+    "expectedDiscount": 50000,
+    "expectedFinal": 450000
+  },
+  {
+    "id": "TC03",
+    "type": "Positive",
+    "description": "Mã fixed, bằng min_order (C3 Biên)",
+    "code": "VIP100",
+    "total_amount": 300000,
+    "user_id": 1,
+    "expectedStatus": 200,
+    "expectedDiscount": 100000,
+    "expectedFinal": 200000
+  },
+  {
+    "id": "TC04",
+    "type": "Positive",
+    "description": "Mã fixed, lớn hơn min_order",
+    "code": "BIGBUY",
+    "total_amount": 600000,
+    "user_id": 1,
+    "expectedStatus": 200,
+    "expectedDiscount": 50000,
+    "expectedFinal": 550000
+  },
+  {
+    "id": "TC05",
+    "type": "Negative",
+    "description": "Mã không tồn tại (Vi phạm C1)",
+    "code": "GHOSTCODE",
+    "total_amount": 500000,
+    "user_id": 1,
+    "expectedStatus": 404,
+    "expectedError": "Mã giảm giá không tồn tại"
+  },
+  {
+    "id": "TC06",
+    "type": "Negative",
+    "description": "Mã đã hết hạn (Vi phạm C2)",
+    "code": "EXPIRED",
+    "total_amount": 500000,
+    "user_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Mã giảm giá đã hết hạn"
+  },
+  {
+    "id": "TC07",
+    "type": "Edge",
+    "description": "Thiếu 1 đồng để đạt min_order (Vi phạm C3 Biên)",
+    "code": "SAVE10",
+    "total_amount": 299999,
+    "user_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Đơn hàng chưa đạt mức tối thiểu"
+  },
+  {
+    "id": "TC08",
+    "type": "Negative",
+    "description": "Nhỏ hơn min_order (Vi phạm C3)",
+    "code": "BIGBUY",
+    "total_amount": 100000,
+    "user_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Đơn hàng chưa đạt mức tối thiểu"
+  },
+  {
+    "id": "TC09",
+    "type": "Negative",
+    "description": "Thiếu user_id (Vi phạm C4)",
+    "code": "SAVE10",
+    "total_amount": 500000,
+    "user_id": null,
+    "expectedStatus": 401,
+    "expectedError": "Vui lòng đăng nhập"
+  },
+  {
+    "id": "TC10",
+    "type": "Negative",
+    "description": "Quá số lượt sử dụng (Vi phạm C5)",
+    "code": "SAVE10",
+    "total_amount": 500000,
+    "user_id": 2,
+    "expectedStatus": 400,
+    "expectedError": "Mã giảm giá đã hết lượt sử dụng"
+  },
+  {
+    "id": "TC11",
+    "type": "Edge",
+    "description": "Tổng tiền bị âm",
+    "code": "SAVE10",
+    "total_amount": -500000,
+    "user_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Tổng tiền không hợp lệ"
+  },
+  {
+    "id": "TC12",
+    "type": "Edge",
+    "description": "Bỏ trống mã giảm giá",
+    "code": "",
+    "total_amount": 500000,
+    "user_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Mã giảm giá không được để trống"
+  }
+]

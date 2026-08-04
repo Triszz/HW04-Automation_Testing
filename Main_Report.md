@@ -1,4 +1,4 @@
-# BÁO CÁO HW04 - Automation Testing
+# BÁO CÁO HW#04 - Automation Testing
 
 **Thông tin sinh viên:**
 
@@ -18,6 +18,8 @@
 
 - **Fragile & Missing Selectors:** AI sinh ra các CSS Selector dựa trên thuộc tính `name` (VD: `input[name="email"]`). Tuy nhiên, khi kiểm tra (Human Review) mã nguồn React thực tế của SUT, các thẻ input hoàn toàn không có `id`, `name`, hay `class` định danh. Thẻ `<label>` cũng thiếu thuộc tính `htmlFor`.
 - **UI Mismatch (Missing Field):** AI đã sinh code để điền vào trường `confirmPassword` dựa trên Prompt đặc tả. Nhưng trên UI thực tế của SUT, trường "Xác nhận mật khẩu" hoàn toàn không tồn tại.
+
+- **Lý do AI dự đoán sai (Why AI missed them):** Do Prompt chỉ được cung cấp đặc tả chức năng (Requirements) chứ không cung cấp mã nguồn HTML thực tế. AI do giới hạn về mặt ngữ cảnh đã tự động suy luận (hallucinate) ra các thuộc tính HTML tiêu chuẩn (như `name="email"`) và giả định rằng giao diện SUT được code tuân thủ 100% theo yêu cầu (có trường Confirm Password).
 
 **2. How I fixed it (Human Intervention):**
 
