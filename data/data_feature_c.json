@@ -1,0 +1,122 @@
+[
+  {
+    "id": "TC01",
+    "type": "Positive",
+    "description": "Thêm sản phẩm thành công với dữ liệu hợp lệ",
+    "name": "MacBook Pro M3",
+    "price": 45000000,
+    "category_id": 1,
+    "expectedStatus": 201,
+    "expectedError": null
+  },
+  {
+    "id": "TC02",
+    "type": "Positive",
+    "description": "Thêm sản phẩm thành công với danh mục khác",
+    "name": "Chuột Logitech G Pro",
+    "price": 2500000,
+    "category_id": 2,
+    "expectedStatus": 201,
+    "expectedError": null
+  },
+  {
+    "id": "TC03",
+    "type": "Negative",
+    "description": "Bỏ trống Tên sản phẩm",
+    "name": "",
+    "price": 100000,
+    "category_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Tên sản phẩm là bắt buộc"
+  },
+  {
+    "id": "TC04",
+    "type": "Edge",
+    "description": "Tên sản phẩm dài đúng 255 ký tự (Biên hợp lệ)",
+    "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "price": 100000,
+    "category_id": 1,
+    "expectedStatus": 201,
+    "expectedError": null
+  },
+  {
+    "id": "TC05",
+    "type": "Edge",
+    "description": "Tên sản phẩm dài 256 ký tự (Biên không hợp lệ)",
+    "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "price": 100000,
+    "category_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Tên sản phẩm không được vượt quá 255 ký tự"
+  },
+  {
+    "id": "TC06",
+    "type": "Negative",
+    "description": "Bỏ trống Giá sản phẩm",
+    "name": "Sản phẩm Test",
+    "price": null,
+    "category_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Giá sản phẩm là bắt buộc"
+  },
+  {
+    "id": "TC07",
+    "type": "Edge",
+    "description": "Giá sản phẩm bằng 0 (Biên không hợp lệ)",
+    "name": "Sản phẩm Test",
+    "price": 0,
+    "category_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Giá phải là số dương lớn hơn 0"
+  },
+  {
+    "id": "TC08",
+    "type": "Negative",
+    "description": "Giá sản phẩm là số âm",
+    "name": "Sản phẩm Test",
+    "price": -50000,
+    "category_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Giá phải là số dương lớn hơn 0"
+  },
+  {
+    "id": "TC09",
+    "type": "Edge",
+    "description": "Giá sản phẩm là 1đ (Biên hợp lệ nhỏ nhất)",
+    "name": "Sản phẩm Test",
+    "price": 1,
+    "category_id": 1,
+    "expectedStatus": 201,
+    "expectedError": null
+  },
+  {
+    "id": "TC10",
+    "type": "Negative",
+    "description": "Không chọn Danh mục",
+    "name": "Sản phẩm Test",
+    "price": 100000,
+    "category_id": null,
+    "expectedStatus": 400,
+    "expectedError": "Danh mục là bắt buộc"
+  },
+  {
+    "id": "TC11",
+    "type": "Negative",
+    "description": "Chọn Danh mục không tồn tại",
+    "name": "Sản phẩm Test",
+    "price": 100000,
+    "category_id": 9999,
+    "expectedStatus": 400,
+    "expectedError": "Danh mục không hợp lệ"
+  },
+  {
+    "id": "TC12",
+    "type": "Edge",
+    "description": "Kiểm tra XSS Injection vào tên sản phẩm",
+    "name": "<script>alert('XSS')</script>",
+    "price": 100000,
+    "category_id": 1,
+    "expectedStatus": 400,
+    "expectedError": "Tên sản phẩm chứa ký tự không hợp lệ"
+  }
+]
