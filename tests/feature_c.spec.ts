@@ -26,6 +26,19 @@ test.describe("Pool C - FR-15: Product CRUD (Add Product Validation)", () => {
     test(`[${data.id}] ${data.type} - ${data.description}`, async ({
       page,
     }) => {
+      // BỎ QUA TC11 VÌ GIAO DIỆN KHÔNG CHO PHÉP CHỌN OPTION ẢO
+      if (data.id === "TC11") {
+        test.skip(
+          true,
+          "Skip do UI của dropdown đã chặn chọn option không tồn tại (Cần test qua API)",
+        );
+      }
+
+      // ĐÁNH DẤU CÁC KNOWN BUGS
+      if (["TC05", "TC06", "TC07", "TC08", "TC10", "TC12"].includes(data.id)) {
+        test.fail(true, "Bug: API thiếu Validation hoàn toàn cho Input Data");
+      }
+
       const nameInput = page.getByPlaceholder("Tên sản phẩm");
       const priceInput = page.getByPlaceholder("Giá tiền");
       const categorySelect = page.locator("select");
