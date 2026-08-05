@@ -1,67 +1,81 @@
 import { test, expect } from "@playwright/test";
 import productData from "../data/data_feature_c.json";
 
-// Giả định URL của trang Quản lý sản phẩm
-const ADMIN_PRODUCT_URL = "http://localhost:5174";
+const ADMIN_URL = "http://localhost:5174/";
 
 test.describe("Pool C - FR-15: Product CRUD (Add Product Validation)", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(ADMIN_URL);
+
+    // Kiểm tra xem có đang ở trang Login không
+    const loginBtn = page.getByRole("button", { name: "Login" });
+    if (await loginBtn.isVisible()) {
+      await page.getByPlaceholder("Email").fill("admin@eshop.com");
+      await page.getByPlaceholder("Password").fill("Admin123!");
+      await loginBtn.click();
+    }
+
+    // Đợi render Dashboard, sau đó click vào Tab "Sản phẩm"
+    await page.getByText("Sản phẩm", { exact: true }).click();
+    await expect(
+      page.locator("h2", { hasText: "Quản lý Sản phẩm" }),
+    ).toBeVisible();
+  });
+
   for (const data of productData) {
     test(`[${data.id}] ${data.type} - ${data.description}`, async ({
       page,
     }) => {
-      await page.goto(ADMIN_PRODUCT_URL);
-
-      // --- CẬP NHẬT 1: CHUẨN HOÁ LOCATORS THEO MÃ NGUỒN REACT ---
       const nameInput = page.getByPlaceholder("Tên sản phẩm");
       const priceInput = page.getByPlaceholder("Giá tiền");
       const categorySelect = page.locator("select");
       const submitBtn = page.getByRole("button", { name: "Lưu sản phẩm" });
 
-      // --- CẬP NHẬT 2: BẮT SỰ KIỆN ALERT (DIALOG) CỦA TRÌNH DUYỆT ---
+      // Lắng nghe sự kiện Alert của trình duyệt
       let dialogMessage = "";
       page.on("dialog", async (dialog) => {
         dialogMessage = dialog.message();
-        await dialog.accept(); // Bấm OK để đóng hộp thoại
+        await dialog.accept();
       });
 
-      // Điền dữ liệu
+      // Điền form
       if (data.name !== null && data.name !== undefined) {
         await nameInput.fill(data.name);
-        // [Assertion Pattern 1]: Value Assertion
         await expect(nameInput).toHaveValue(data.name);
       }
-
       if (data.price !== null && data.price !== undefined) {
         await priceInput.fill(data.price.toString());
       }
-
       if (data.category_id !== null && data.category_id !== undefined) {
         await categorySelect.selectOption(data.category_id.toString());
       }
 
-      // Click Lưu
       await submitBtn.click();
-
-      // Đợi 1 chút để API xử lý và hiển thị Alert (nếu có)
       await page.waitForTimeout(500);
 
-      // --- 3. KIỂM CHỨNG KẾT QUẢ ---
       if (data.expectedStatus === 201) {
-        // [Assertion Pattern 2]: Element Count / Table Assertion
-        // Nếu thành công, sản phẩm phải xuất hiện trong bảng (table)
-        // Ta tìm thẻ <td> chứa tên sản phẩm vừa nhập
+        // [Assertion Pattern 1]: Form State / Value Assertion (Dev xoá trắng form sau khi thêm thành công)
+        await expect(nameInput).toHaveValue("");
+
+        // [Assertion Pattern 2]: Element Count / Table Assertion (Sản phẩm phải hiện ở bảng dưới)
         if (data.name) {
-          const addedProduct = page
-            .locator(`td:has-text("${data.name}")`)
-            .first();
-          await expect(addedProduct).toBeVisible();
+          const addedRow = page.locator(`td:has-text("${data.name}")`).first();
+          await expect(addedRow).toBeVisible();
         }
       } else {
-        // [Assertion Pattern 3]: Dialog/Text Assertion
-        // Nếu lỗi, hệ thống phải văng Alert chứa câu báo lỗi
-        expect(dialogMessage.toLowerCase()).toContain(
-          (data.expectedError as string).toLowerCase(),
-        );
+        // XỬ LÝ LỖI
+        if (data.id === "TC03") {
+          // Bắt lỗi HTML5 Native Validation (Do Dev xài thuộc tính `required` ở input tên)
+          const validationMsg = await nameInput.evaluate(
+            (el: HTMLInputElement) => el.validationMessage,
+          );
+          expect(validationMsg).not.toBe("");
+        } else {
+          // [Assertion Pattern 3]: Dialog Assertion (Bắt lỗi từ Alert)
+          expect(dialogMessage.toLowerCase()).toContain(
+            (data.expectedError as string).toLowerCase(),
+          );
+        }
       }
     });
   }
