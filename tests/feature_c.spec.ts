@@ -3,7 +3,7 @@ import productData from "../data/data_feature_c.json";
 
 const ADMIN_URL = "http://localhost:5174/";
 
-test.describe("Pool C - FR-15: Product CRUD (Add Product Validation)", () => {
+test.describe("Pool C - FR-15: Product CRUD", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ADMIN_URL);
 

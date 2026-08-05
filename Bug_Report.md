@@ -52,7 +52,7 @@
 
 ## Feature B: FR-09: Mã Giảm Giá (Coupon) (Pool B)
 
-### Bug 1: [Major] FR-09: Từ chối áp dụng mã giảm giá khi tổng tiền bằng đúng ngưỡng tối thiểu
+### Bug 3: [Major] FR-09: Từ chối áp dụng mã giảm giá khi tổng tiền bằng đúng ngưỡng tối thiểu
 
 - **Mức độ (Severity):** Major (Cao - Ảnh hưởng trực tiếp đến quyền lợi thanh toán của người dùng)
 
@@ -68,7 +68,7 @@
 
   ![alt text](images/image-2.png)
 
-### Bug 2: [Major] FR-09: API /apply-coupon bỏ qua kiểm tra JWT Token cho phép Guest xác thực mã giảm giá
+### Bug 4: [Major] FR-09: API /apply-coupon bỏ qua kiểm tra JWT Token cho phép Guest xác thực mã giảm giá
 
 - **Mức độ (Severity):** Major (Cao - Lỗi logic luồng người dùng và rò rỉ thông tin mã khuyến mãi)
 
@@ -87,7 +87,7 @@
 
   ![alt text](images/image-3.png)
 
-### Bug 3: [Critical] FR-09: Sai công thức toán học nghiêm trọng khi tính toán mã giảm giá loại phần trăm (Percent)
+### Bug 5: [Critical] FR-09: Sai công thức toán học nghiêm trọng khi tính toán mã giảm giá loại phần trăm (Percent)
 
 - **Mức độ (Severity):** Critical (Nghiêm trọng - Thất thoát dữ liệu tài chính, logic sai hoàn toàn)
 
@@ -107,7 +107,7 @@
 
   ![alt text](images/image-4.png)
 
-### Bug 4: [Major] FR-09: Thiếu validation chặn giá trị đầu vào là số âm cho tổng đơn hàng
+### Bug 6: [Major] FR-09: Thiếu validation chặn giá trị đầu vào là số âm cho tổng đơn hàng
 
 - **Mức độ (Severity):** Major (Cao - Thiếu sót trong Data Validation)
 
@@ -122,3 +122,63 @@
 - **Ảnh chụp (Screenshot):**
 
   ![alt text](images/image-5.png)
+
+---
+
+## Feature C: FR-15: Quản lý Sản phẩm (Product CRUD) (Pool C)
+
+### Bug 7: [Critical] FR-15: Lỗ hổng XSS (Cross-Site Scripting) do không mã hóa tên sản phẩm
+
+- **Mức độ (Severity):** Critical (Nghiêm trọng - Lỗ hổng bảo mật)
+
+- **Mô tả chi tiết:** API `POST /api/products` không thực hiện làm sạch (sanitize) dữ liệu đầu vào. Khi truyền vào Tên sản phẩm chứa mã độc HTML/JS (VD: `<script>alert('XSS')</script>`), hệ thống vẫn trả về `201 Created` và lưu nguyên văn đoạn mã này vào Database.
+
+- **Tác động:** Khi sản phẩm này được render ra trang danh sách sản phẩm hoặc trang chủ, đoạn script độc hại sẽ được thực thi trên trình duyệt của người dùng khác, dẫn đến rủi ro bị đánh cắp Cookie, Token hoặc thao túng giao diện.
+
+- **Trạng thái Automation:** Kịch bản kiểm thử bảo mật (TC12) trả về `Failed` (do kỳ vọng báo lỗi nhưng hệ thống lại báo thành công và không hiện Dialog). Đã đánh dấu `test.fail()`.
+
+- **Issue Link:** https://github.com/Triszz/HW04-Automation_Testing/issues/7
+
+- **Ảnh chụp (Screenshot):**
+
+  ![alt text](images/image-6.png)
+
+  <br>
+
+  ![alt text](images/image-7.png)
+
+### Bug 8: [Major] FR-15: Thiếu Validation chặn giá sản phẩm âm, bằng 0 hoặc rỗng
+
+- **Mức độ (Severity):** Major (Cao - Thất thoát logic kinh doanh)
+
+- **Mô tả chi tiết:** Theo đặc tả, Giá sản phẩm bắt buộc phải là số dương (`> 0`). Tuy nhiên, Backend không có bất kỳ bộ lọc Validation nào cho trường `price`. Người dùng có thể truyền giá trị `-50000`, `0`, hoặc thậm chí truyền `null`/rỗng. API vẫn chấp nhận và trả về Status 201.
+
+- **Tác động:** Phá vỡ hoàn toàn logic kinh doanh của hệ thống. Sản phẩm có giá âm khi được thêm vào giỏ hàng sẽ làm trừ lùi tổng tiền của khách, dẫn đến thất thoát tài chính nghiêm trọng.
+
+- **Trạng thái Automation:** Test Cases (TC06, TC07, TC08) trả về `Failed`. Đã đánh dấu `test.fail()` trong script.
+
+- **Issue Link:** https://github.com/Triszz/HW04-Automation_Testing/issues/8
+
+- **Ảnh chụp (Screenshot):**
+
+  ![alt text](images/image-8.png)
+
+### Bug 9: [Major] FR-15: Bỏ qua kiểm tra độ dài chuỗi biên (Length Constraint) của Tên sản phẩm
+
+- **Mức độ (Severity):** Major (Cao - Rủi ro tràn bộ nhớ/Database)
+
+- **Mô tả chi tiết:** Ràng buộc của Tên sản phẩm là tối đa 255 ký tự. Khi sử dụng kỹ thuật kiểm thử Boundary Value Analysis (Giá trị biên) và nhập vào chuỗi dài 256 ký tự chữ "A", hệ thống thay vì văng lỗi `400 Bad Request` thì vẫn âm thầm tiếp nhận và ghi vào cơ sở dữ liệu.
+
+- **Tác động:** Gây sai lệch đặc tả hệ thống. Nếu Database không được thiết lập chặt chẽ (`VARCHAR(255)`), có thể dẫn đến lỗi SQL Truncation hoặc làm vỡ layout giao diện (UI Broken) khi hiển thị các chuỗi quá dài.
+
+- **Trạng thái Automation:** Test Case giá trị biên (TC05) trả về `Failed`. Đã đánh dấu `test.fail()` trong kịch bản.
+
+- **Issue Link:** https://github.com/Triszz/HW04-Automation_Testing/issues/9
+
+- **Ảnh chụp (Screenshot):**
+
+  ![alt text](images/image-9.png)
+
+<br>
+
+![alt text](images/image-10.png)

@@ -69,9 +69,45 @@ Kịch bản Automation được thiết kế bao gồm 12 Test Cases (Data-driv
 
 Khác với Feature A bị hỏng toàn diện, Feature B vẫn có những luồng hoạt động thành công. Do đó, đối với các lỗi phát hiện được, em áp dụng chiến lược sử dụng `test.fail()` của Playwright để đánh dấu chúng là **Known Bugs**. Kỹ thuật này giúp kịch bản phân tách rõ ràng giữa test case hỏng do lỗi Script và test case hỏng do khiếm khuyết của hệ thống.
 
-Qua quá trình chạy Automation kết hợp với Kiểm thử thăm dò thủ công (Exploratory Testing), tôi đã log thành công 4 Bugs nghiêm trọng:
+Qua quá trình chạy Automation kết hợp với Kiểm thử thăm dò thủ công (Exploratory Testing), em đã log thành công 4 Bugs nghiêm trọng:
 
 - **[Major] Lỗi logic giá trị biên (Boundary Bug):** Hệ thống sử dụng toán tử `>` thay vì `>=` cho ngưỡng tối thiểu, từ chối mã khi đơn hàng vừa chạm mức 300,000đ.
 - **[Major] Lỗi bảo mật bỏ qua xác thực (Auth Bypass):** API `/apply-coupon` không yêu cầu JWT Token, cho phép Guest áp dụng mã giảm giá, gây trải nghiệm UX xấu khi bị chặn lại ở bước thanh toán cuối và có nguy cơ rò rỉ (brute-force) mã khuyến mãi.
 - **[Critical] Tính toán sai công thức toán học:** Nhờ phát hiện lỗ hổng Weak Assertion của AI, kiểm thử thủ công xác nhận Backend tính toán sai công thức loại Percent (nhân tổng tiền thay vì chia 100), trả về số tiền tiết kiệm âm hàng trăm triệu đồng. Sau khi nâng cấp kịch bản lên Strong Assertion, Automation đã bắt được lỗi này và em đã chủ động đánh dấu `test.fail()` cho TC02.
 - **[Major] Thiếu Validation chặn số âm:** Hệ thống không có cơ chế làm sạch dữ liệu đầu vào (Input Validation), không chặn lỗi khi người dùng nhập số tiền tổng đơn hàng là số âm.
+
+---
+
+### Feature C: FR-15 - Quản lý Sản phẩm (Product CRUD) (Pool C)
+
+**1. What the AI got wrong or missed:**
+
+- **Kiến trúc SPA & Navigation (Flow Gap):** AI giả định hệ thống dùng cơ chế định tuyến đa trang (Multi-page) với URL truy cập trực tiếp (VD: `/admin/products/add`). Tuy nhiên, qua phân tích `App.jsx`, Web Admin là một Single Page Application (SPA). Toàn bộ module được render dựa trên state `activeTab`. Việc cố truy cập bằng URL sẽ gây thất bại toàn diện.
+- **Silent Success (Thiếu phản hồi UI):** AI thiết lập Assertion đi tìm các thông báo thành công (Toast/Alert màu xanh). Nhưng lập trình viên đã không code bất kỳ thông báo nào cho hàm Thêm sản phẩm. Khi thêm thành công, hệ thống chỉ âm thầm xoá trắng form và gọi API fetch lại danh sách bảng.
+- **Native HTML5 Validation vs JS Alert:** Đối với các trường hợp lỗi (Negative), AI dự đoán API sẽ luôn trả lỗi về UI. Trên thực tế:
+  - Lỗi trống tên (TC03) bị chặn ngay tại Frontend bởi thuộc tính `required` (gây ra tooltip HTML5 Native) mà không bao giờ gọi xuống API.
+  - Các lỗi khác từ API lại được hệ thống bắn ra dưới dạng `window.alert()` nguyên thuỷ thay vì hiển thị trên DOM.
+
+**2. How I fixed it (Human Intervention):**
+
+- **BeforeEach Hook:** Bổ sung khối `test.beforeEach` vào kịch bản để tự động hoá luồng Đăng nhập (tạo token JWT) và giả lập thao tác click vào menu `<li>Sản phẩm</li>` để kích hoạt đúng State của React trước mỗi Test Case.
+- **Native Browser Dialogs Intercept:** Viết thêm hàm `page.on("dialog")` để Playwright chặn, đọc nội dung và tự động đóng hộp thoại `window.alert()`.
+- **Hybrid Error Handling:** Cập nhật lại Assertions:
+  - Đối với thành công: Kiểm tra việc form bị xoá trắng (`toHaveValue("")`) và kiểm chứng sản phẩm mới được render trên `<table/>`.
+  - Đối với lỗi bỏ trống (TC03): Sử dụng `evaluate()` để trích xuất và kiểm tra thuộc tính `validationMessage` của DOM Element (Native HTML5).
+
+**3. Test Execution & System Defect Discovery:**
+
+Kịch bản Automation hoàn thiện chạy 12 Test Cases bao gồm cả xử lý chuỗi dài 255 ký tự (Boundary), XSS Injection và Validation logic. Kịch bản sử dụng thành công 3 Assertion Patterns đặc thù cho React SPA:
+
+1. `toHaveValue()`: Kiểm tra trạng thái reset form sau khi submit thành công (Form State Assertion).
+2. `toBeVisible()`: Kiểm tra phần tử sản phẩm mới có được chèn vào DOM Table hay không (Data Grid Assertion).
+3. Sử dụng `page.on('dialog')` kết hợp `expect().toContain()`: Bắt và kiểm chứng văn bản trong cửa sổ pop-up (Dialog/Alert Assertion).
+
+Qua quá trình chạy Automation kết hợp phân tích Log, em đã phát hiện Backend của chức năng Thêm sản phẩm (FR-15) **hoàn toàn vắng bóng Data Validation**. Điều này dẫn đến việc log thành công 3 Bug Report lớn:
+
+- **[Critical] Lỗ hổng bảo mật XSS (Cross-Site Scripting):** Hệ thống không mã hóa (sanitize) dữ liệu đầu vào. Tên sản phẩm chứa mã độc `<script>` vẫn được lưu thành công, nguy cơ cao gây tấn công XSS khi hiển thị ra trang chủ.
+- **[Major] Thiếu Validation giá trị số học (Price):** API cho phép thêm sản phẩm với giá tiền rỗng, giá bằng `0`, và giá trị âm (Negative number).
+- **[Major] Thiếu Validation độ dài và ràng buộc (Length & Null constraints):** Tên sản phẩm vượt quá 255 ký tự hoặc không chọn danh mục (Null Category) vẫn được API ghi nhận bình thường.
+
+Riêng đối với TC11 (chọn danh mục không tồn tại), em đã chủ động sử dụng hàm `test.skip()` vì giao diện thẻ `<select>` đã chặn tốt trường hợp này. Việc test Validation của Foreign Key cần được thực hiện thông qua API Testing.
