@@ -1,0 +1,7 @@
+# AI Critique
+
+Trong quá trình thực hiện dự án tự động hóa này, AI đã bộc lộ một số hạn chế đáng chú ý, chủ yếu xoay quanh việc "ảo giác" (hallucinate) giao diện và thiếu nhận thức về kiến trúc hệ thống. Cụ thể, AI ban đầu đã định vị sai hoàn toàn các thành phần UI bằng cách tự bịa ra các class CSS không tồn tại (như `.toast-success` hay `.text-red-500`). Hơn nữa, nó không lường trước được hành vi thực tế của ứng dụng, bỏ sót các trường hợp như "thành công trong im lặng" (form chỉ tự xóa trắng), HTML5 Validation chặn gọi API, hay việc lập trình viên dùng `window.alert()` để báo lỗi trong một ứng dụng React SPA.
+
+AI thất bại trong việc phát hiện những vấn đề này vì nó hoạt động dựa trên xác suất thống kê và các khuôn mẫu web tiêu chuẩn. Khi chỉ có đặc tả PRD hoặc API cấp cao, AI tự động mặc định chọn các kịch bản lập trình phổ biến nhất. Nó thiếu đi ngữ cảnh mã nguồn (source code) thực tế để nhận ra hệ thống mục tiêu đang được xây dựng theo một hướng khác biệt.
+
+Trải nghiệm này đã củng cố một nguyên tắc cốt lõi khi làm việc với AI: sự cần thiết tuyệt đối của chính sách "Zero-Hallucination" và "Human-in-the-Loop" (HITL). Em học được rằng AI là một trợ lý xuất sắc để tạo bộ khung code (boilerplate) và dữ liệu Data-driven toàn diện. Tuy nhiên, kỹ sư QA phải luôn làm người gác cổng cuối cùng: thiết lập ràng buộc chặt chẽ, đối chiếu DOM thực tế, áp dụng Strong Assertions, và tự mình phân tích để quản lý các bug thực sự của hệ thống, thay vì tin tưởng mù quáng vào toàn bộ kết quả từ AI.
