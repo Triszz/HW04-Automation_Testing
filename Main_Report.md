@@ -18,7 +18,7 @@ Báo cáo dưới đây tổng hợp kết quả thực thi kiểm thử tự đ
 
 - **Number of Features Automated:** 3 (Feature A, Feature B, Feature C)
 - **Number of Test Cases Automated:** 36 (12 Test Cases / Feature)
-- **Number of Browser Runs:** 3 (Chromium, Firefox, WebKit). Tổng cộng có **108 Browser Runs** trên toàn bộ Test Suite (36 TCs x 3 Browsers).
+- **Number of Browser Runs:** 3 (Chrome, Firefox, Edge). Tổng cộng có **108 Browser Runs** trên toàn bộ Test Suite (36 TCs x 3 Browsers).
 - **HTML Report:** Báo cáo HTML (Playwright HTML Reporter) được xuất đầy đủ, hiển thị rõ metadata **"Run by: 23127503"** trên tiêu đề.
 
 ### 2. Results Breakdown (Cross-Browser Execution)
@@ -141,7 +141,7 @@ Riêng đối với TC11 (chọn danh mục không tồn tại), em đã chủ �
 Video (với thời lượng trên 5 phút) trình bày toàn bộ quá trình thực thi kịch bản kiểm thử tự động từ đầu đến cuối (End-to-End) cho chức năng **Feature C (FR-15: Quản lý Sản phẩm)**.
 
 - **Xác thực tác giả:** Video bắt đầu bằng việc chạy lệnh `whoami` và `hostname` trên terminal để minh chứng quyền tác giả của sinh viên.
-- **Thực thi Đa trình duyệt (Multi-browser):** Kịch bản được thiết lập chạy thực tế trên 3 trình duyệt (Chromium, Firefox, WebKit) thông qua framework Playwright.
+- **Thực thi Đa trình duyệt (Multi-browser):** Kịch bản được thiết lập chạy thực tế trên 3 trình duyệt (Chrome, Firefox, Edge) thông qua framework Playwright.
 - **Báo cáo HTML (HTML Report):** Cuối video là phần mở và phân tích báo cáo HTML Report do Playwright sinh ra, thể hiện rõ các kịch bản thành công (Passed), các luồng bị bỏ qua đúng chủ đích (Skipped), và đặc biệt là cách Playwright bảo vệ luồng CI/CD thông qua cơ chế Expected Failures (`test.fail()`) khi bắt được Known Bugs.
 
 **2. Giải thích lỗi của AI & Cách khắc phục (AI Fix Narration):**
