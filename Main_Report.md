@@ -16,7 +16,7 @@ Báo cáo dưới đây tổng hợp kết quả thực thi kiểm thử tự đ
 
 ### 1. Execution Metrics
 
-- **Number of Features Automated:** 3 (Feature A, Feature B, Feature C)
+- **Number of Features Automated:** 3 (Feature A: FR-01 - Đăng ký tài khoản (Pool A), Feature B: FR-09 - Mã Giảm Giá (Coupon) (Pool B), Feature C: FR-15 - Quản lý Sản phẩm (Product CRUD) (Pool C))
 - **Number of Test Cases Automated:** 36 (12 Test Cases / Feature)
 - **Number of Browser Runs:** 3 (Chrome, Firefox, Edge). Tổng cộng có **108 Browser Runs** trên toàn bộ Test Suite (36 TCs x 3 Browsers).
 - **HTML Report:** Báo cáo HTML (Playwright HTML Reporter) được xuất đầy đủ, hiển thị rõ metadata **"Run by: 23127503"** trên tiêu đề.
