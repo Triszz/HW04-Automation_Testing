@@ -10,6 +10,27 @@
 
 ---
 
+## Automation Test Summary Report
+
+Báo cáo dưới đây tổng hợp kết quả thực thi kiểm thử tự động bằng Playwright, áp dụng phương pháp Data-Driven Testing (DDT) và chạy đa trình duyệt (Multi-browser).
+
+### 1. Execution Metrics
+
+- **Number of Features Automated:** 3 (Feature A, Feature B, Feature C)
+- **Number of Test Cases Automated:** 36 (12 Test Cases / Feature)
+- **Number of Browser Runs:** 3 (Chromium, Firefox, WebKit). Tổng cộng có **108 Browser Runs** trên toàn bộ Test Suite (36 TCs x 3 Browsers).
+- **HTML Report:** Báo cáo HTML (Playwright HTML Reporter) được xuất đầy đủ, hiển thị rõ metadata **"Run by: 23127503"** trên tiêu đề.
+
+### 2. Results Breakdown (Cross-Browser Execution)
+
+- **Total Executed:** 105 (Không tính 3 TCs bị skipped)
+- **Passed:** 69 (Bao gồm Happy Path và các "Expected Failures" đánh dấu bằng `test.fail()`)
+- **Failed:** 36 (Lỗi Blocker tại Feature A làm gián đoạn toàn bộ luồng)
+- **Skipped:** 3 (TC11 của Feature C chủ động dùng `test.skip()`)
+- **Total Bugs Logged:** 9 Bugs (Bao gồm ảnh chụp màn hình, chi tiết tại file `Bug_Report.md` và GitHub Issues).
+
+---
+
 ## Task 1: Review & Gap Analysis of AI-generated Scripts
 
 ### Feature A: FR-01 - Đăng ký tài khoản (Pool A)
@@ -28,7 +49,7 @@
 
 **3. Test Execution & System Defect Discovery:**
 
-Kịch bản Automation được thiết kế bao gồm 12 Test Cases (phủ cả Happy Path và Negative/Edge Cases) và áp dụng thành công **3 Assertion Patterns** theo đúng yêu cầu:
+Kịch bản Automation được thiết kế bao gồm 12 Test Cases (phủ cả Happy Path và Negative/Edge Cases), **được cấu trúc theo mô hình Data-driven và lưu trữ dữ liệu tách biệt hoàn toàn trong file `data_feature_a.json` riêng biệt**. Kịch bản cũng áp dụng thành công **3 Assertion Patterns** theo đúng yêu cầu:
 
 1. `toHaveURL()`: Kiểm tra trạng thái điều hướng của trang (Page State / URL Assertion).
 2. `toBeVisible()`: Kiểm tra trạng thái hiển thị của DOM (Visibility Assertion).
@@ -98,7 +119,7 @@ Qua quá trình chạy Automation kết hợp với Kiểm thử thăm dò thủ
 
 **3. Test Execution & System Defect Discovery:**
 
-Kịch bản Automation hoàn thiện chạy 12 Test Cases bao gồm cả xử lý chuỗi dài 255 ký tự (Boundary), XSS Injection và Validation logic. Kịch bản sử dụng thành công 3 Assertion Patterns đặc thù cho React SPA:
+Kịch bản Automation hoàn thiện chạy 12 Test Cases **(được nạp dữ liệu độc lập từ file `data_feature_c.json` theo chuẩn Data-Driven)**, bao gồm cả xử lý chuỗi dài 255 ký tự (Boundary), XSS Injection và Validation logic. Kịch bản sử dụng thành công 3 Assertion Patterns đặc thù cho React SPA:
 
 1. `toHaveValue()`: Kiểm tra trạng thái reset form sau khi submit thành công (Form State Assertion).
 2. `toBeVisible()`: Kiểm tra phần tử sản phẩm mới có được chèn vào DOM Table hay không (Data Grid Assertion).
@@ -111,3 +132,24 @@ Qua quá trình chạy Automation kết hợp phân tích Log, em đã phát hi�
 - **[Major] Thiếu Validation độ dài và ràng buộc (Length & Null constraints):** Tên sản phẩm vượt quá 255 ký tự hoặc không chọn danh mục (Null Category) vẫn được API ghi nhận bình thường.
 
 Riêng đối với TC11 (chọn danh mục không tồn tại), em đã chủ động sử dụng hàm `test.skip()` vì giao diện thẻ `<select>` đã chặn tốt trường hợp này. Việc test Validation của Foreign Key cần được thực hiện thông qua API Testing.
+
+---
+
+## Task 2: Demo Video
+
+**1. Nội dung Video Demo:**
+Video (với thời lượng trên 5 phút) trình bày toàn bộ quá trình thực thi kịch bản kiểm thử tự động từ đầu đến cuối (End-to-End) cho chức năng **Feature C (FR-15: Quản lý Sản phẩm)**.
+
+- **Xác thực tác giả:** Video bắt đầu bằng việc chạy lệnh `whoami` và `hostname` trên terminal để minh chứng quyền tác giả của sinh viên.
+- **Thực thi Đa trình duyệt (Multi-browser):** Kịch bản được thiết lập chạy thực tế trên 3 trình duyệt (Chromium, Firefox, WebKit) thông qua framework Playwright.
+- **Báo cáo HTML (HTML Report):** Cuối video là phần mở và phân tích báo cáo HTML Report do Playwright sinh ra, thể hiện rõ các kịch bản thành công (Passed), các luồng bị bỏ qua đúng chủ đích (Skipped), và đặc biệt là cách Playwright bảo vệ luồng CI/CD thông qua cơ chế Expected Failures (`test.fail()`) khi bắt được Known Bugs.
+
+**2. Giải thích lỗi của AI & Cách khắc phục (AI Fix Narration):**
+Trong video, em đã trực tiếp thuyết minh và giải thích một sai lầm nghiêm trọng của AI khi sinh script ban đầu và cách em đã rà soát, can thiệp:
+
+- **Sai lầm của AI (AI Missed):** AI bị "ảo giác" (hallucinate) rằng hệ thống sẽ render lỗi dưới dạng các thẻ HTML thông thường trên DOM (VD: class `.text-red-500`). AI hoàn toàn thiếu ngữ cảnh về việc ứng dụng React SPA này sử dụng `window.alert()` và tính năng HTML5 Validation (`required`).
+- **Cách khắc phục (Human Fix):** Em đã viết đè lại kịch bản, sử dụng `page.on('dialog')` để chặn/đọc nội dung Alert, và dùng `await element.evaluate(el => el.validationMessage)` để truy xuất lỗi HTML5. Sự can thiệp này là yếu tố then chốt giúp kịch bản chạy thành công thay vì bị văng lỗi Timeout 30s.
+
+**3. Video Link:**
+
+- 🔗 **YouTube Unlisted Link:** https://youtu.be/3MAqXpzOKZs
